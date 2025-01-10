@@ -1,1 +1,1 @@
-# CEB
+# Chemical Equations Balancer
