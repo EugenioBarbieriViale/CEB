@@ -14,8 +14,7 @@ fn main() {
     let tokens = tokenize(&eq);
     println!("{:?}", tokens);
 
-    let result = calc_parameters(&tokens);
-    println!("The solution is: {:?}", result);
+    calc_parameters(&tokens);
 }
 
 fn tokenize(eq: &String) -> Vec<Vec<usize>> {
@@ -71,49 +70,34 @@ fn tokenize(eq: &String) -> Vec<Vec<usize>> {
 }
 
 fn resolved(tokens: &Vec<Vec<usize>>, params: &Vec<usize>) -> bool {
-    let mut sum = 0;
-    let mut after_equal = false;
+    let mut sum: isize = 0;
+    let equal_sign_pos = tokens[0][0];
 
     assert!(tokens.len()-1 == params.len());
     
-    for j in 1..tokens.len() {
-        let p = params[j-1];
+    for i in 1..tokens.len() {
+        let j = i - 1;
+        let p = params[j];
 
-        for i in tokens[j].clone() {
-            if i == 0 {
-                after_equal = true;
-            }
-
-            if !after_equal {
-                sum += p * i
-            }
-            else {
-                sum -= p * i
+        for t in &tokens[i] {
+            if i < equal_sign_pos {
+                sum += (p * t) as isize;
+            } else {
+                sum -= (p * t) as isize;
             }
         }
     }
-    
-    return sum == 0
+
+    return sum == 0;
 }
 
-fn calc_parameters(tokens: &Vec<Vec<usize>>) -> Vec<usize> {
+fn calc_parameters(tokens: &Vec<Vec<usize>>) {
     let len = tokens.len()-1;
-    let mut params = vec![1; len];
+    let params = vec![1,2,3,4,5,6,7,8,9];
 
-    for i in 2..10 {
-        for j in 0..len {
-            params[j] = i;
-
-            for perm in params.iter().cloned().permutations(params.len()).unique() {
-                println!("{:?}", perm);
-
-                if resolved(tokens, &perm) {
-                    println!("\nEquations solved!");
-                    return perm;
-                }
-            }
+    for perm in params.iter().cloned().permutations(len) {
+        if resolved(tokens, &perm) {
+            println!("FOUND: --- {:?} ---", perm);
         }
     }
-
-    params 
 }
