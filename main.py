@@ -4,62 +4,71 @@ str_eq = str(input("Enter your equation: ")).replace(" ", "") + "+"
 
 def coefficients(str_eq):
     ans = []
-    chunk = np.array([])
+    chunk = []
 
     for i in range(len(str_eq)):
         if i+2 < len(str_eq) and str_eq[i].isupper() and str_eq[i+1].islower():
             if str_eq[i+2].isdigit():
-                chunk = np.append(chunk, int(str_eq[i+2]))
+                chunk.append(int(str_eq[i+2]))
             else:
-                chunk = np.append(chunk, 1)
+                chunk.append(1)
 
         elif i+1 < len(str_eq) and str_eq[i].isupper():
             if str_eq[i+1].isdigit():
-                chunk = np.append(chunk, int(str_eq[i+1]))
+                chunk.append(int(str_eq[i+1]))
             else:
-                chunk = np.append(chunk, 1)
+                chunk.append(1)
 
         if str_eq[i] == "+" or str_eq[i] == "=":
             ans.append(chunk)
-            chunk = np.array([])
+            chunk = []
 
         if str_eq[i] == "=":
-            ans.append(np.array([-1]))
+            ans.append([-1])
 
-    return np.array(ans, dtype=object)
+    return ans
 
 def elements(str_eq):
     ans = []
-    chunk = np.array([])
+    chunk = []
 
     for i in range(len(str_eq)):
         if str_eq[i].isupper() and not str_eq[i+1].islower():
-            chunk = np.append(chunk, str(str_eq[i]))
+            chunk.append(str(str_eq[i]))
         elif str_eq[i].isupper() and str_eq[i+1].islower():
-            chunk = np.append(chunk, str(str_eq[i])+str(str_eq[i+1]))
+            chunk.append(str(str_eq[i])+str(str_eq[i+1]))
 
         if str_eq[i] == "+" or str_eq[i] == "=":
             ans.append(chunk)
-            chunk = np.array([])
+            chunk = []
 
         if str_eq[i] == "=":
-            ans.append(np.array([-1]))
+            ans.append([-1])
 
-    return np.array(ans, dtype=object)
+    return ans
 
-coef = coefficients(str_eq)
+coeff = coefficients(str_eq)
 elems = elements(str_eq)
+print(coeff)
+print(elems)
 
-def verify(encoded, tokens):
-
-    if encoded.shape != tokens.shape:
-        print("Not same shape: ", encoded.shape, tokens.shape)
+def set_eq(elems, coeff):
+    if len(elems) != len(coeff):
+        print("Not same shape: ", len(elems), len(coeff))
         return -1
 
     ans = []
-    for i in range(encoded.shape[0]):
-        for t, e in zip(tokens[i], encoded[i]):
-            print(t, e)
+    eq_index = elems.index([-1])
 
-verify(coef, elems)
-# print(verify(coef, elems))
+    for i in range(eq_index):
+        for j in range(len(elems) - eq_index):
+            for k in range(len(elems[i])):
+                for l in range(len(elems[j])):
+                    if elems[i][k] == elems[j][l]:
+                        ans.append([coeff[i][k], elems[i][k], coeff[j][l], elems[j][l]])
+
+    return ans
+
+e = set_eq(elems, coeff)
+print("\n")
+print(e)
